@@ -254,26 +254,24 @@ class OnlineChat extends Component {
 
     updateMetaAutoHide(hideFirst) {
         var block = document.getElementById('messages-scroll');
-        ['meta-auto-hide','meta-auto-hide-normal'].forEach(function(className){
-            var x = block.getElementsByClassName(className);
-            if (x.length > 0) {
-                var i;
-                var lengthHide = hideFirst ? 0 : 1;
-                for (i = 0; i < x.length - lengthHide ; i++) {
-                    x[i].style.display = 'none';
-                }
-                var lastChild = block.lastChild;
+        var x = block.getElementsByClassName("meta-auto-hide");
+        if (x.length > 0) {
+            var i;
+            var lengthHide = hideFirst ? 0 : 1;
+            for (i = 0; i < x.length - lengthHide ; i++) {
+                x[i].style.display = 'none';
+            }
+            var lastChild = block.lastChild;
 
-                // Checking not null not enough, because element can be text type
-                if (lastChild && typeof lastChild.getElementsByClassName !== 'undefined') {
-                    x = lastChild.getElementsByClassName(className);
-                    var i;
-                    for (i = 0; i < x.length; i++) {
-                        x[i].style.display = '';
-                    }
+            // Checking not null not enough, because element can be text type
+            if (lastChild && typeof lastChild.getElementsByClassName !== 'undefined') {
+                x = lastChild.getElementsByClassName("meta-auto-hide");
+                var i;
+                for (i = 0; i < x.length; i++) {
+                    x[i].style.display = '';
                 }
             }
-        });
+        }
     }
 
     nextUntil(htmlElement, match, condition = true, any = false) {
@@ -317,7 +315,7 @@ class OnlineChat extends Component {
                     this.intervalFunction = () => {
                         if (this.nextUntil(msg,'.message-admin', false, true).length > 0) {
                             msg.parentNode.removeChild(msg);
-                            this.scrollBottom(false, false);
+                            this.scrollBottom();
                             this.intervalFunction = null;
                             clearInterval(this.intervalPending);
                         } else {
@@ -335,7 +333,7 @@ class OnlineChat extends Component {
                                     this.removeClass(item, 'hide');
                                 }
 
-                                this.scrollBottom(false, false);
+                                this.scrollBottom();
                             }
                         }
                     }
@@ -367,7 +365,7 @@ class OnlineChat extends Component {
 
                     if (delay > 0) {
                         this.updateMetaAutoHide();
-                        this.scrollBottom(false, false);
+                        this.scrollBottom();
                     }
                 }
 
@@ -533,7 +531,7 @@ class OnlineChat extends Component {
             if (this.messagesAreaRef.current) {
                 var msgScroller = document.getElementById('messages-scroll');
                 var messageElement = document.getElementById('msg-'+this.props.chatwidget.getIn(['chatLiveData','lfmsgid']));
-                if (msgScroller && messageElement && messageElement.className.indexOf('ignore-auto-scroll') === -1 && (msgScroller.scrollHeight - msgScroller.offsetHeight) > messageElement.offsetTop) {
+                if (msgScroller && messageElement && (msgScroller.scrollHeight - msgScroller.offsetHeight) > messageElement.offsetTop) {
                     this.setState({scrollButton: true});
                     this.messagesAreaRef.current.scrollTop = messageElement.offsetTop;
                 } else {
@@ -583,7 +581,7 @@ class OnlineChat extends Component {
     doScrollBottom(smartScroll) {
         if (this.messagesAreaRef.current) {
             var messageElement;
-            if (smartScroll && (messageElement = document.getElementById('msg-'+this.props.chatwidget.getIn(['chatLiveData','lfmsgid']))) !== null && messageElement.className.indexOf('ignore-auto-scroll') === -1 ) {
+            if (smartScroll && (messageElement = document.getElementById('msg-'+this.props.chatwidget.getIn(['chatLiveData','lfmsgid']))) !== null) {
                 this.messagesAreaRef.current.scrollTop = messageElement.offsetTop;
             } else {
                 this.messagesAreaRef.current.scrollTop = this.messagesAreaRef.current.scrollHeight + 1000;
@@ -592,6 +590,7 @@ class OnlineChat extends Component {
     }
 
     scrollBottom(onlyIfAtBottom, smartScroll) {
+
         if (this.messagesAreaRef.current && (!onlyIfAtBottom || !this.state.scrollButton)) {
             this.doScrollBottom(smartScroll);
             setTimeout(() => {

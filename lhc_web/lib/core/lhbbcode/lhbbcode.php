@@ -774,10 +774,6 @@ class erLhcoreClassBBCode
         return "<button type=\"button\" class=\"btn btn-xs text-white fs13 btn-secondary\" onclick=\"lhinst.buttonAction($(this),'" . htmlspecialchars(strip_tags($matches[1])) . "')\">" . htmlspecialchars($matches[2]) . "</button>";
    }
 
-   public static function _make_link_trigger($matches) {
-       return "<a class=\"action-image link-trigger-button\" data-id=\"{msg_id}\" data-payload=\"".htmlspecialchars(strip_tags($matches[1]))."\" onclick='lhinst.updateTriggerClicked(\"".htmlspecialchars(strip_tags($matches[1]))."\",{msg_id},$(this))'>" . htmlspecialchars($matches[2]) . "</a>";
-   }
-
    public static function _make_youtube_block($matches) {
 
          $data = parse_url($matches[1]);
@@ -794,21 +790,6 @@ class erLhcoreClassBBCode
          }
    }
 
-   public static function getHost() {
-
-       if (isset($_SERVER['HTTP_HOST'])) {
-           $site_address = (erLhcoreClassSystem::$httpsMode == true ? 'https:' : 'http:') . '//' . $_SERVER['HTTP_HOST'] ;
-       } else if (class_exists('erLhcoreClassInstance')) {
-           $site_address = 'https://' . erLhcoreClassInstance::$instanceChat->address . '.' . erConfigClassLhConfig::getInstance()->getSetting( 'site', 'seller_domain');
-       } else if (class_exists('erLhcoreClassExtensionLhcphpresque')) {
-           $site_address = erLhcoreClassModule::getExtensionInstance('erLhcoreClassExtensionLhcphpresque')->settings['site_address'];
-       } else {
-           $site_address = '';
-       }
-
-       return $site_address;
-   }
-
    public static function _make_upload_link($matches){
        $data = $matches[1];
        return '<a class="action-image alert-link" onclick="lhinst.chooseFile()">' . htmlspecialchars($data) . '</a>';
@@ -816,7 +797,7 @@ class erLhcoreClassBBCode
 
    public static function _make_base_link($matches) {
        $data = htmlspecialchars($matches[1]);
-       $url = self::getHost() . erLhcoreClassDesign::baseurl($data);
+       $url = (erLhcoreClassSystem::$httpsMode == true ? 'https:' : 'http:') . '//'. (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '') . erLhcoreClassDesign::baseurl($data);
        return  $url;
    }
 
@@ -845,7 +826,7 @@ class erLhcoreClassBBCode
                                 $subpartParts = explode('=',$mainData[1]);
                                 if ($subpartParts[0] == 'link') {
                                     if (!isset($subpartParts[1])) {
-                                        $prepend = '<a class="link" rel="noreferrer" target="_blank" href="'. self::getHost() . erLhcoreClassDesign::baseurl('file/downloadfile') . "/{$file->id}/{$hash}/(inline)/true\">";
+                                        $prepend = '<a class="link" rel="noreferrer" target="_blank" href="//'. (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '') . erLhcoreClassDesign::baseurl('file/downloadfile') . "/{$file->id}/{$hash}/(inline)/true\">";
                                         $append = '</a>';
                                     } else {
                                         $url = self::esc_url($subpartParts[1]);
@@ -857,21 +838,21 @@ class erLhcoreClassBBCode
                                 }
                             } else {
                                 $prepend = '<div class="position-relative">';
-                                $append = '<a class="hidden-download" target="_blank" rel="noreferrer" href="'. self::getHost() . erLhcoreClassDesign::baseurl('file/downloadfile') . "/{$file->id}/{$hash}".'/(inline)/true"></a></div>';
+                                $append = '<a class="hidden-download" target="_blank" rel="noreferrer" href="//'. (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '') . erLhcoreClassDesign::baseurl('file/downloadfile') . "/{$file->id}/{$hash}".'/(inline)/true"></a></div>';
                             }
-                            return $prepend . '<img id="img-file-' . $file->id . '" class="img-fluid" src="' . self::getHost() . erLhcoreClassDesign::baseurl('file/downloadfile') . "/{$file->id}/{$hash}" . '" alt="" />' . $append;
+                            return $prepend . '<img id="img-file-' . $file->id . '" class="img-fluid" src="//' . (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '') . erLhcoreClassDesign::baseurl('file/downloadfile') . "/{$file->id}/{$hash}" . '" alt="" />' . $append;
                         }
 
                         $audio = '';
                         if ($fileExtension == 'mp3' || $fileExtension == 'wav' || $fileExtension == 'ogg' || $fileExtension == 'oga') {
-                            return '<a rel="noreferrer" class="hidden-download audio-download" href="'. self::getHost() . erLhcoreClassDesign::baseurl('file/downloadfile') . "/{$file->id}/{$hash}".'"></a><audio preload="none" style="width: 230px" controls><source src="' . self::getHost() . erLhcoreClassDesign::baseurl('file/downloadfile') . "/{$file->id}/{$hash}" . '" type="' . $file->type . '"></audio>';
+                            return '<a rel="noreferrer" class="hidden-download audio-download" href="//'. (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '') . erLhcoreClassDesign::baseurl('file/downloadfile') . "/{$file->id}/{$hash}".'"></a><audio preload="none" style="width: 230px" controls><source src="//' . $_SERVER['HTTP_HOST'] . erLhcoreClassDesign::baseurl('file/downloadfile') . "/{$file->id}/{$hash}" . '" type="' . $file->type . '"></audio>';
                         } elseif ($fileExtension == 'mp4' || $fileExtension == 'avi' || $fileExtension == 'mov' || $fileExtension == 'ogg' || $fileExtension == '3gpp') {
-                            $audio = '<br><div class="embed-responsive embed-responsive-16by9"><video class="embed-responsive-item" controls><source src="' . self::getHost() . erLhcoreClassDesign::baseurl('file/downloadfile') . "/{$file->id}/{$hash}" . '"></video></div>';
+                            $audio = '<br><div class="embed-responsive embed-responsive-16by9"><video class="embed-responsive-item" controls><source src="//' . (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '') . erLhcoreClassDesign::baseurl('file/downloadfile') . "/{$file->id}/{$hash}" . '"></video></div>';
                         } else if ($fileExtension == 'jpg' || $fileExtension == 'jpeg' || $fileExtension == 'png') {
-                            $audio = ' <a rel="noreferrer" class="link" onclick="$(\'#img-file-' . $file->id . '\').toggleClass(\'hide\')"><i class="material-icons mr-0">&#xE251;</i></a><br/><img id="img-file-' . $file->id . '" class="img-fluid hide" src="' . self::getHost() . erLhcoreClassDesign::baseurl('file/downloadfile') . "/{$file->id}/{$hash}" . '" alt="" />';
+                            $audio = ' <a rel="noreferrer" class="link" onclick="$(\'#img-file-' . $file->id . '\').toggleClass(\'hide\')"><i class="material-icons mr-0">&#xE251;</i></a><br/><img id="img-file-' . $file->id . '" class="img-fluid hide" src="//' . $_SERVER['HTTP_HOST'] . erLhcoreClassDesign::baseurl('file/downloadfile') . "/{$file->id}/{$hash}" . '" alt="" />';
                         }
 
-                        return "<a href=\"" . self::getHost() . erLhcoreClassDesign::baseurl('file/downloadfile') . "/{$file->id}/{$hash}\" target=\"_blank\" rel=\"noreferrer\" class=\"link\" >" . erTranslationClassLhTranslation::getInstance()->getTranslation('file/file', 'Download file') . ' - ' . htmlspecialchars($file->upload_name) . ' [' . $file->extension . ']' . "</a>" . $audio;
+                        return "<a href=\"//" . (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '') . erLhcoreClassDesign::baseurl('file/downloadfile') . "/{$file->id}/{$hash}\" target=\"_blank\" rel=\"noreferrer\" class=\"link\" >" . erTranslationClassLhTranslation::getInstance()->getTranslation('file/file', 'Download file') . ' - ' . htmlspecialchars($file->upload_name) . ' [' . $file->extension . ']' . "</a>" . $audio;
                     }
                 }
 
@@ -899,7 +880,7 @@ class erLhcoreClassBBCode
                    if ($surveyId == $surveyItem->survey_id) 
                    {
                        $survey = erLhAbstractModelSurvey::fetch($surveyId);
-                       return "<a href=\"" . self::getHost()  . erLhcoreClassDesign::baseurl('survey/collected')."/{$survey->id}?show={$surveyItem->id}\" target=\"_blank\" rel=\"noreferrer\" class=\"link\" >" . erTranslationClassLhTranslation::getInstance()->getTranslation('file/file','Collected survey data') . ' - ' . htmlspecialchars($survey->name) . "</a>";
+                       return "<a href=\"//" . (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '') . erLhcoreClassDesign::baseurl('survey/collected')."/{$survey->id}?show={$surveyItem->id}\" target=\"_blank\" rel=\"noreferrer\" class=\"link\" >" . erTranslationClassLhTranslation::getInstance()->getTranslation('file/file','Collected survey data') . ' - ' . htmlspecialchars($survey->name) . "</a>";
                    }
                }
                
@@ -921,7 +902,7 @@ class erLhcoreClassBBCode
 
    				// Check that user has permission to see the chat. Let say if user purposely types file bbcode
    				if ($hash == $file->security_hash) {
-   					return self::getHost() . erLhcoreClassDesign::baseurldirect('file/downloadfile')."/{$file->id}/{$hash}";
+   					return erLhcoreClassXMP::getBaseHost().(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '').erLhcoreClassDesign::baseurldirect('file/downloadfile')."/{$file->id}/{$hash}";
    				}
    			} catch (Exception $e) {
 
@@ -1164,8 +1145,6 @@ class erLhcoreClassBBCode
 
     	$ret = preg_replace_callback('#\[button_action="?(.*?)"?\](.*?)\[/button_action\]#is', 'erLhcoreClassBBCode::_make_button_action', $ret);
 
-    	$ret = preg_replace_callback('#\[link_trigger="?([0-9]+)"?\](.*?)\[/link_trigger\]#is', 'erLhcoreClassBBCode::_make_link_trigger', $ret);
-
     	if (strpos($ret,'[translation]') !== false) {
             // For the admin we show original and translated text
             if (isset($paramsMessage['html_as_text']) && $paramsMessage['html_as_text'] == true) {
@@ -1193,10 +1172,6 @@ class erLhcoreClassBBCode
     	$ret = preg_replace_callback('#\[survey="?(.*?)"?\]#is', 'erLhcoreClassBBCode::_make_url_survey', $ret);
 
     	$ret = trim($ret);
-
-        if (isset($paramsMessage['msg_id']) && $paramsMessage['msg_id'] > 0) {
-            $ret = str_replace('{msg_id}',$paramsMessage['msg_id'], $ret);
-        }
 
         erLhcoreClassChatEventDispatcher::getInstance()->dispatch('chat.after_make_clickable',array('msg' => & $ret));
         

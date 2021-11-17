@@ -90,9 +90,6 @@ class erLhcoreClassGenericBotActionConditions {
                     if (in_array($condition['content']['comp'],['lt','lte','gt','gte'])) {
                         $attr = round((float)$attr,3);
                         $valAttr = round((float)$valAttr,3);
-                    } elseif ((is_string($attr) || is_numeric($attr)) && (is_string($valAttr) || is_numeric($valAttr))) {
-                        $attr = (string)$attr;
-                        $valAttr = (string)$valAttr;
                     }
 
                     if ($condition['content']['comp'] == 'eq' && !($attr == $valAttr)) {

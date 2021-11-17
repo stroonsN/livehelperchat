@@ -629,7 +629,7 @@ class erLhcoreClassRestAPIHandler
     {
 
         $filter = self::getChatListFilter();
-        
+
         // Get chats list
         $chats = erLhcoreClassModelChat::getList($filter);
         
@@ -699,16 +699,6 @@ class erLhcoreClassRestAPIHandler
             foreach ($chats as $index => $chat) {
                 $chats[$index]->department_groups = isset($depMembersItems[$chat->dep_id]) ? $depMembersItems[$chat->dep_id] : array();
             }
-        }
-
-        if (isset($_GET['include_department']) && $_GET['include_department'] == 'true') {
-            erLhcoreClassChat::prefillObjects($chats,array(
-                array(
-                    'dep_id',
-                    'department',
-                    'erLhcoreClassModelDepartament::getList'
-                ),
-            ));
         }
 
         if (!empty($prefillFields) || !empty($ignoreFields)) {

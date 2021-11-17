@@ -948,7 +948,6 @@ class erLhcoreClassChatWorkflow {
 
         return array(
             'chat_id' => (is_object($chat) ? $chat->id : null),
-            'chat' => (is_object($chat) ? $chat : null),
             'message_id' => $messageId,
             'messages' => $messages,
             'has_messages' => $hasMessages

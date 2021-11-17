@@ -79,7 +79,7 @@ class erLhcoreClassModelChatBlockedUser
             $emailBlock .= ' OR (nick = ' . $db->quote($params['country_code']) . ' AND btype = 6 AND (`dep_id` = ' . $db->quote($params['dep_id']). ' OR `dep_id` = 0))';
         }
 
-        $blockRecord = erLhcoreClassModelChatBlockedUser::findOne(array(
+        return erLhcoreClassModelChatBlockedUser::getCount(array(
                 'customfilter' => array(
                     '(
                         (`ip` = ' . $db->quote($params['ip']) .' AND btype IN (0,3,4)) OR 
@@ -88,34 +88,7 @@ class erLhcoreClassModelChatBlockedUser
                         ' . $emailBlock . '
                     ) AND (expires = 0 OR expires > ' . time() . ')'
                 )
-            ));
-
-        $isBlocked = $blockRecord instanceof erLhcoreClassModelChatBlockedUser;
-
-        if ($isBlocked == true && isset($params['log_block']) && $params['log_block'] == true) {
-
-            $auditOptions = erLhcoreClassModelChatConfig::fetch('audit_configuration');
-            $data = (array)$auditOptions->data;
-
-            if (isset($data['log_block']) && $data['log_block'] == true) {
-                erLhcoreClassLog::write(
-                    (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'no-site')."\n".
-                    print_r($params,true)
-                    ,
-                    ezcLog::SUCCESS_AUDIT,
-                    array(
-                        'source' => 'lhc',
-                        'category' => 'block',
-                        'line' => __LINE__,
-                        'file' => __FILE__,
-                        'object_id' => $blockRecord->id
-                    )
-                );
-            }
-
-        }
-
-        return $isBlocked;
+        )) > 0;
     }
 
     public static function blockChat($params) {
@@ -132,18 +105,18 @@ class erLhcoreClassModelChatBlockedUser
                 $skipStandardBlock = true;
             }
         } elseif ($params['btype'] == self::BLOCK_NICK) {
-            $filter = array('filter' => array('btype' => self::BLOCK_NICK, 'nick' => (string)$params['chat']->nick));
+            $filter = array('filter' => array('btype' => self::BLOCK_NICK, 'nick' => $params['chat']->nick));
         } elseif ($params['btype'] == self::BLOCK_NICK_DEP) {
-            $filter = array('filter' => array('btype' => self::BLOCK_NICK_DEP,  'dep_id' =>  $params['chat']->dep_id, 'nick' => (string)$params['chat']->nick));
+            $filter = array('filter' => array('btype' => self::BLOCK_NICK_DEP,  'dep_id' =>  $params['chat']->dep_id, 'nick' => $params['chat']->nick));
         } elseif ($params['btype'] == self::BLOCK_ALL_IP_NICK_DEP) {
-            $filter = array('filter' => array('btype' => self::BLOCK_ALL_IP_NICK_DEP, 'dep_id' =>  $params['chat']->dep_id, 'nick' => (string)$params['chat']->nick));
+            $filter = array('filter' => array('btype' => self::BLOCK_ALL_IP_NICK_DEP, 'dep_id' =>  $params['chat']->dep_id, 'nick' => $params['chat']->nick));
         } elseif ($params['btype'] == self::BLOCK_ALL_IP_NICK) {
-            $filter = array('filter' => array('btype' => self::BLOCK_ALL_IP_NICK, 'nick' => (string)$params['chat']->nick));
+            $filter = array('filter' => array('btype' => self::BLOCK_ALL_IP_NICK, 'nick' => $params['chat']->nick));
         }
 
         $blockRecordCreated = false;
 
-        if (isset($params['email']) && erLhcoreClassModelChatBlockedUser::getCount(array('filter' => array('nick' => (string)$params['email'], 'btype' => self::BLOCK_EMAIL))) == 0) {
+        if (isset($params['email']) && erLhcoreClassModelChatBlockedUser::getCount(array('filter' => array('nick' => $params['email'], 'btype' => self::BLOCK_EMAIL))) == 0) {
             $blockRecordCreated = true;
 
             // Adjust settings for e-mail blocking
@@ -198,7 +171,7 @@ class erLhcoreClassModelChatBlockedUser
         $block->user_id = erLhcoreClassUser::instance()->getUserID();
         $block->chat_id = $params['chat']->id;
         $block->dep_id = $params['chat']->dep_id;
-        $block->nick = (string)($params['btype'] == self::BLOCK_EMAIL ? $params['chat']->email : $params['chat']->nick);
+        $block->nick = ($params['btype'] == self::BLOCK_EMAIL ? $params['chat']->email : $params['chat']->nick);
         $block->btype = $params['btype'];
         $block->expires = isset($params['expires']) ? (int)$params['expires'] : 0;
         $block->saveThis();

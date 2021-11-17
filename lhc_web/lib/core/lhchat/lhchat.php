@@ -163,8 +163,6 @@ class erLhcoreClassChat {
         // Optimization - we get these stats only from last 200 chats
         $filter['customfilter'][] = "(`lh_chat`.`id` IN (SELECT `id` FROM (SELECT `chat_id` AS `id` FROM `lh_abstract_subject_chat` {$filterSubject} ORDER BY `id` DESC LIMIT 150) AS `sq`))";
 
-        //echo "SELECT `id` FROM (SELECT `chat_id` AS `id` FROM `lh_abstract_subject_chat` {$filterSubject} ORDER BY `id` DESC LIMIT 150";
-
         if ($limitation !== true) {
             $filter['customfilter'][] = $limitation;
         }
@@ -1374,17 +1372,7 @@ class erLhcoreClassChat {
 
    public static function generateHash()
    {
-       $string = '';
-
-       while (($len = strlen($string)) < 40) {
-           $size = 40 - $len;
-
-           $bytes = random_bytes($size);
-
-           $string .= substr(str_replace(['/', '+', '='], '', base64_encode($bytes)), 0, $size);
-       }
-
-       return $string;;
+       return sha1(mt_rand().time());
    }
    
    public static function setTimeZoneByChat($chat)

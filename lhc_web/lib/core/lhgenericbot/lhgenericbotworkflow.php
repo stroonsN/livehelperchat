@@ -733,10 +733,6 @@ class erLhcoreClassGenericBotWorkflow {
                             $args['args']['msg'] = $params['msg'];
                         }
 
-                        if (isset($eventData['content']['replace_array'])) {
-                            $args['args']['replace_array'] = $eventData['content']['replace_array'];
-                        }
-
                         // Build a fake trigger and set actions
                         $trigger = new erLhcoreClassModelGenericBotTrigger();
                         $trigger->bot_id = $chat->gbot_id;
@@ -879,43 +875,41 @@ class erLhcoreClassGenericBotWorkflow {
                             }
                         }
 
-                        if (!(isset($eventData['content']['attr_options']['identifier']) && ($eventData['content']['attr_options']['identifier'] == '[msg]' || $eventData['content']['attr_options']['identifier'] == '[file]'))) {
-                            if (!empty($chat->additional_data)) {
-                                $chatAttributes = (array)json_decode($chat->additional_data,true);
-                            } else {
-                                $chatAttributes = array();
-                            }
-
-                            $attrIdToUpdate = (isset($eventData['content']['attr_options']['identifier']) ? $eventData['content']['attr_options']['identifier'] : $eventData['content']['attr_options']['name']);
-
-                            foreach ($chatAttributes as $key => $attr) {
-                                if ($attr['identifier'] == $attrIdToUpdate) {
-                                    unset($chatAttributes[$key]);
-                                }
-                            }
-
-                            if ($attrIdToUpdate == 'lhc.email') {
-                                $chat->email = $payload;
-                            } elseif ($attrIdToUpdate == 'lhc.nick') {
-                                $chat->nick = $payload;
-                            } elseif ($attrIdToUpdate == 'lhc.phone') {
-                                $chat->phone = $payload;
-                            } else {
-                                $chatAttributes[] = array('key' => (isset($eventData['content']['attr_options']['name']) ? $eventData['content']['attr_options']['name'] : $attrIdToUpdate), 'identifier' => $attrIdToUpdate, 'value' => $payload);
-                            }
-
-                            $chat->additional_data = json_encode(array_values($chatAttributes));
-
-                            $q = $db->createUpdateQuery();
-                            $q->update( 'lh_chat' )
-                                ->set( 'additional_data', $q->bindValue($chat->additional_data) )
-                                ->set( 'email', $q->bindValue($chat->email) )
-                                ->set( 'nick', $q->bindValue($chat->nick) )
-                                ->set( 'phone', $q->bindValue($chat->phone) )
-                                ->where( $q->expr->eq( 'id', $chat->id ) );
-                            $stmt = $q->prepare();
-                            $stmt->execute();
+                        if (!empty($chat->additional_data)) {
+                            $chatAttributes = (array)json_decode($chat->additional_data,true);
+                        } else {
+                            $chatAttributes = array();
                         }
+
+                        $attrIdToUpdate = (isset($eventData['content']['attr_options']['identifier']) ? $eventData['content']['attr_options']['identifier'] : $eventData['content']['attr_options']['name']);
+
+                        foreach ($chatAttributes as $key => $attr) {
+                            if ($attr['identifier'] == $attrIdToUpdate) {
+                                unset($chatAttributes[$key]);
+                            }
+                        }
+
+                        if ($attrIdToUpdate == 'lhc.email') {
+                            $chat->email = $payload;
+                        } elseif ($attrIdToUpdate == 'lhc.nick') {
+                            $chat->nick = $payload;
+                        } elseif ($attrIdToUpdate == 'lhc.phone') {
+                            $chat->phone = $payload;
+                        } else {
+                            $chatAttributes[] = array('key' => (isset($eventData['content']['attr_options']['name']) ? $eventData['content']['attr_options']['name'] : $attrIdToUpdate), 'identifier' => $attrIdToUpdate, 'value' => $payload);
+                        }
+
+                        $chat->additional_data = json_encode(array_values($chatAttributes));
+
+                        $q = $db->createUpdateQuery();
+                        $q->update( 'lh_chat' )
+                            ->set( 'additional_data', $q->bindValue($chat->additional_data) )
+                            ->set( 'email', $q->bindValue($chat->email) )
+                            ->set( 'nick', $q->bindValue($chat->nick) )
+                            ->set( 'phone', $q->bindValue($chat->phone) )
+                            ->where( $q->expr->eq( 'id', $chat->id ) );
+                        $stmt = $q->prepare();
+                        $stmt->execute();
 
                     } elseif (isset($eventData['content']['type']) && $eventData['content']['type'] == 'rest_api') {
                         // Rest API in progress

@@ -833,7 +833,7 @@ class erLhcoreClassChatValidator {
             $chat->dep_id = $priority['dep_id'];
         }
 
-        if (erLhcoreClassModelChatBlockedUser::isBlocked(array('log_block' => true, 'country_code' => $chat->country_code, 'ip' => $chat->ip, 'dep_id' => $chat->dep_id, 'nick' => $chat->nick, 'email' => $chat->email))) {
+        if (erLhcoreClassModelChatBlockedUser::isBlocked(array('country_code' => $chat->country_code, 'ip' => $chat->ip, 'dep_id' => $chat->dep_id, 'nick' => $chat->nick, 'email' => $chat->email))) {
             $Errors['blocked_user'] = erTranslationClassLhTranslation::getInstance()->getTranslation('chat/startchat','At this moment you can contact us via email only. Sorry for the inconveniences.');
         }
 
@@ -1786,10 +1786,6 @@ class erLhcoreClassChatValidator {
                     'user' => false
                 ));
             }
-
-            erLhcoreClassChatEventDispatcher::getInstance()->dispatch('chat.chat_offline_request_saved', array(
-                'chat' =>  & $params['chat']
-            ));
         }
     }
 
@@ -1870,7 +1866,7 @@ class erLhcoreClassChatValidator {
                             erLhcoreClassGenericBotWorkflow::processButtonClick($chat, $message, $params['trigger_payload_id'], array('processed' => (isset($params['processed']) && $params['processed'] == true)));
                         }
 
-                        if (isset($message) && $message instanceof erLhcoreClassModelmsg && $message->id > 0) {
+                        if (isset($message) && $message instanceof erLhcoreClassModelmsg) {
                             $chat->last_msg_id = $message->id;
                         }
                     }

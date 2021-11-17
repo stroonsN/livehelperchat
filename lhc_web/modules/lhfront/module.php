@@ -10,12 +10,6 @@ $ViewList['default'] = array(
     'functions' => array( 'use' )
 );
 
-$ViewList['settings'] = array(
-    'params' => array(),
-    'uparams' => array('action'),
-    'functions' => array( 'use' )
-);
-
 $ViewList['tabs'] = array(
     'params' => array(),
     'uparams' => array('id'),

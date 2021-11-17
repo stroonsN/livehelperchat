@@ -21,7 +21,6 @@ $tpl->set('chat_id',$Params['user_parameters']['chat_id']);
 
 $Result['content'] = $tpl->fetch();
 $Result['pagelayout'] = 'chattabs';
-$Result['body_class'] = 'h-100 dashboard-height';
 
 $title = isset($chat) ? $chat->nick : '.';
 

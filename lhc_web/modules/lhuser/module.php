@@ -92,12 +92,6 @@ $ViewList['editgroup'] = array(
     'functions' => array( 'editgroup' )
     );
 
-$ViewList['clonegroup'] = array(
-    'params' => array('group_id'),
-    'uparams' => array('csfr'),
-    'functions' => array( 'editgroup' )
-);
-
 $ViewList['groupassignuser'] = array(
     'params' => array('group_id'),
     'functions' => array( 'groupassignuser' )
@@ -237,6 +231,5 @@ $FunctionList['change_job_title'] = array('explain' => 'Allow user to change his
 $FunctionList['change_core_attributes'] = array('explain' => 'Allow user to change his own username/password/e-mail/XMPP Username');
 $FunctionList['change_name_surname'] = array('explain' => 'Allow user to change his own name/surname');
 $FunctionList['pswdsecurity'] = array('explain' => 'Allow user to manage password requirements');
-$FunctionList['largeactivitytimeout'] = array('explain' => 'Allow user to choose a large inactivity timeout');
 
 ?>

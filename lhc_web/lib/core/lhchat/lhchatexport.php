@@ -326,7 +326,7 @@ class erLhcoreClassChatExport {
                 $browserDetails = $detect->getBrowser($item->uagent);
 
                 $osFamily = isset($OSDetails['os_family']) ? $OSDetails['os_family'] : 'Unknown';
-                $browserBrand = isset($browserDetails['browser_name']) ? $browserDetails['browser_name'] : 'Unknown';
+                $browserBrand = isset($browserDetails['browser_name']) ?  $browserDetails['browser_name'] : 'Unknown';
 
                 $referrer = (string)$item->referrer;
                 $session_referrer = (string)$item->session_referrer;
