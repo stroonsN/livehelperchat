@@ -4,9 +4,9 @@ return array (
         array (
             'site' =>
                 array (
-                    'title' => 'Live helper Chat',
+                    'title' => 'ANASUNUCU Canlı Destek',
                     'site_admin_email' => '',
-                    'locale' => 'en_EN',
+                    'locale' => 'tr_TR',
                     'theme' => 'defaulttheme',
                     'installed' => false,
                     'secrethash' => '',
@@ -18,7 +18,7 @@ return array (
                     'proxy_mode' => false,
                     'disable_rest_api_by_user' => false,
                     'one_login_per_account' => false,
-                    'time_zone' => '',
+                    'time_zone' => 'Asia/Istanbul',
                     'date_format' => 'Y-m-d',
                     'date_hour_format' => 'H:i:s',
                     'date_date_hour_format' => 'Y-m-d H:i:s',
